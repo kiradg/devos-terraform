@@ -4,6 +4,10 @@ resource "aws_launch_configuration" "as_conf" {
   instance_type = "t2.micro"
   security_groups = [aws_security_group.allow_tls.id]
   user_data = file("${path.module}/user_data.sh")
+  
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_autoscaling_group" "bar" {
@@ -17,5 +21,8 @@ resource "aws_autoscaling_group" "bar" {
   launch_configuration      = aws_launch_configuration.as_conf.name
   vpc_zone_identifier       = data.aws_subnet_ids.example.ids
   load_balancers = [aws_elb.bar.id]
-
+  
+  lifecycle {
+    create_before_destroy = true
+  }
 }
